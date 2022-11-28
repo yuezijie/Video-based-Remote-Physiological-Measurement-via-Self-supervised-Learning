@@ -2,9 +2,8 @@ This is the code base for paper [Video-based Remote Physiological Measurement vi
 
 # Install and compile the prerequisites
 - Python 3.8
-- PyTorch >= 1.1
+- PyTorch >= 1.8
 - NVIDIA GPU + CUDA
-- [HeartPy](https://github.com/paulvangentcom/heartrate_analysis_python).
 - Python packages: numpy,opencv-python,scipy
 # Pretrained model
 Please download the [pretrained model](https://drive.google.com/file/d/1ZvKSwiXI9bSW-LGblrgZ4KGXuSgbqQJU/view?usp=sharing)
