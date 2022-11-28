@@ -6,11 +6,14 @@ This is the code base for paper [Video-based Remote Physiological Measurement vi
 - NVIDIA GPU + CUDA
 - Python packages: numpy,opencv-python,scipy
 # Pretrained model
-Please download the [pretrained model](https://drive.google.com/file/d/1ZvKSwiXI9bSW-LGblrgZ4KGXuSgbqQJU/view?usp=sharing)
+Please download the [pretrained model](https://drive.google.com/file/d/1ZvKSwiXI9bSW-LGblrgZ4KGXuSgbqQJU/view?usp=sharing), and put it under weights/
 
 # Main experiment
 
-Codes are being uploaded...
+1. Modify the data path in trainlist.txt and testlist.txt to your own data path.
+2. Run [python main_rppg.py].
+
+(Some codes are still being updated)
 
 
 # Citation
