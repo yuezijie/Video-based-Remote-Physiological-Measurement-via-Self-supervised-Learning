@@ -1,0 +1,11 @@
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject3
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject41
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject32
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject27
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject46
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject43
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject14
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject42
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject25
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject1
+/big_data/seed-yzj/UBFC-faceimg/dataset2/subject5
