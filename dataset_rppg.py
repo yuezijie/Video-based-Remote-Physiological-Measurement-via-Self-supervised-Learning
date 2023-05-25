@@ -13,10 +13,8 @@ def load_img(filepath, scale,video_length):
     whole_video=[]
     count=[0,1,2,3]
     for i in range(begin, begin + (video_length*4)):
-
         img=cv2.imread(os.path.join(filepath,'face_{0}.png'.format(i)))
         img=cv2.resize(img,(scale, scale))
-
         whole_video.append(img)
     whole_video=np.array(whole_video)
 
@@ -32,9 +30,8 @@ def load_img(filepath, scale,video_length):
 
 def augment(img_in):
     info_aug = {'flip_h': False, 'flip_v': False, 'rot0': False, 'rot90': False,'rot180': False,'rot270': False}
-    randomaug=random.sample(['flip_h', 'flip_v','rot0','rot90','rot180','rot270'],2)
+    randomaug=random.sample(['flip_h', 'flip_v','rot0','rot90','rot180','rot270'],1)
     info_aug[randomaug[0]]=True
-    info_aug[randomaug[1]]=True
 
     if info_aug['flip_v']:
         img_in = [cv2.flip(j,0) for j in img_in]
@@ -54,17 +51,16 @@ def augment(img_in):
 def frequency_ratio():
   ratio_interval1 = np.random.uniform(0.3,0.8)
   ratio_interval2 = np.random.uniform(1.2,1.7)
-  full_interval = np.stack((ratio_interval1,ratio_interval2))
-  random_ratio = np.random.choice(full_interval)
+  random_ratio = np.random.choice([ratio_interval1, ratio_interval2])
   return random_ratio
 
 
 class DatasetFromFolder(data.Dataset):
-    def __init__(self, file_list,num_negative,video_length,transform=None):
+    def __init__(self, file_list,num_negative,video_length,transform=None,scale=64):
         super(DatasetFromFolder, self).__init__()
         self.video_list =[line.rstrip() for line in open(file_list)]
         self.transform = transform
-        self.scale=64
+        self.scale=scale
         self.num_negative=num_negative
         self.video_length=video_length
 

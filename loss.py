@@ -69,9 +69,9 @@ def predict_heart_rate(signal, Fs, min_hr=40., max_hr=180., method='fast_ideal')
             max_bpm = f0 + (x1 / (x0 + x1)) * (f1 - f0)
         return max_bpm
 
-class FRCL(nn.Module):
+class FRL(nn.Module):
     def __init__(self,Fs,min_hr ,max_hr):
-        super(FRCL, self).__init__()
+        super(FRL, self).__init__()
         self.Fs=Fs
         self.min_hr=min_hr
         self.max_hr=max_hr
@@ -79,22 +79,24 @@ class FRCL(nn.Module):
     def forward(self, neg_rppgarr,pos_rppg1,pos_rppg2,ratio_array):
         loss=0
         count=0
+        # rppg B,T
+        # ratio_array B,K,T
+        for j in range(pos_rppg1.shape[0]):
+            poshr1= predict_heart_rate(pos_rppg1[j].detach().cpu().numpy(),self.Fs,self.min_hr,self.max_hr)
 
-        poshr1= predict_heart_rate(pos_rppg1[0].detach().cpu().numpy(),self.Fs,self.min_hr,self.max_hr)
-
-        poshr2= predict_heart_rate(pos_rppg2[0].detach().cpu().numpy(),self.Fs,self.min_hr,self.max_hr)
-        for i in range(len(neg_rppgarr)):
-            neghr=predict_heart_rate(neg_rppgarr[i][0].detach().cpu().numpy(),self.Fs,self.min_hr,self.max_hr)
-
-            loss+=np.abs(neghr/poshr1-ratio_array[0][i][0].detach().cpu().numpy())+\
-                  np.abs(neghr/poshr2-ratio_array[0][i][0].detach().cpu().numpy())
-            count+=2
+            poshr2= predict_heart_rate(pos_rppg2[j].detach().cpu().numpy(),self.Fs,self.min_hr,self.max_hr)
+            for i in range(len(neg_rppgarr)):
+                # neg_rppgarr K,B,T
+                neghr=predict_heart_rate(neg_rppgarr[i][j].detach().cpu().numpy(),self.Fs,self.min_hr,self.max_hr)
+                loss+=np.abs(neghr/poshr1-ratio_array[j][i][0].detach().cpu().numpy())+\
+                      np.abs(neghr/poshr2-ratio_array[j][i][0].detach().cpu().numpy())
+                count+=2
         loss=loss/count
-        return loss
+        return loss/pos_rppg1.shape[0]
 
-class CFAL(nn.Module):
+class FAL(nn.Module):
     def __init__(self, Fs, high_pass=2.5, low_pass=0.4):
-        super(CFAL, self).__init__()
+        super(FAL, self).__init__()
         #PSD_MSE
         self.norm_psd = CalculateNormPSD(Fs, high_pass, low_pass)
         self.distance_func = nn.MSELoss()
@@ -125,6 +127,7 @@ class FCL(nn.Module):
         posfre2= self.norm_psd(pos_rppg2)
         pos_dis=torch.exp(self.distance_func(posfre1, posfre2)/self.tau)
         neg_dis_total=0
+        # neg_rppgarr K,B,T
         for i in range(len(neg_rppgarr)):
             negfre=self.norm_psd(neg_rppgarr[i])
             neg_dis = torch.exp(self.distance_func(posfre1, negfre) / self.tau)+torch.exp(self.distance_func(posfre2, negfre) / self.tau)

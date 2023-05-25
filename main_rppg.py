@@ -14,11 +14,12 @@ import cv2
 import math
 import numpy as np
 from net_full import Mynet
-from loss import FRCL,CFAL,FCL
+from loss import FRL,FAL,FCL
+
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
-parser.add_argument('--batchSize', type=int, default=1, help='training batch size')
+parser.add_argument('--batchSize', type=int, default=4, help='training batch size')
 parser.add_argument('--start_epoch', type=int, default=0, help='Starting epoch for continuing training')
 parser.add_argument('--nEpochs', type=int, default=100, help='number of epochs to train for')
 
@@ -28,7 +29,7 @@ parser.add_argument('--threads', type=int, default=0, help='number of threads fo
 parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
 parser.add_argument('--num_negative', type=int, default=4, help='number of negative samples')
 parser.add_argument('--video_length', type=int, default=150, help='video length')
-parser.add_argument('--num_expert', type=int, default=4, help='number of experts')
+parser.add_argument('--num_expert', type=int, default=9, help='number of experts')
 parser.add_argument('--gpus', default=1, type=int, help='number of gpu')
 parser.add_argument('--file_list', type=str, default='trainlist.txt')
 parser.add_argument('--pretrained_path', type=str, default='premodel.pth')
@@ -49,26 +50,32 @@ def train(epoch):
 
         if cuda:
             input = Variable(input).cuda(gpus_list[0]).float()
+            # B,T,C,W,H
             positive1 = Variable(positive1).cuda(gpus_list[0]).float()
+            # B,T,C,W,H
             positive2 = Variable(positive2).cuda(gpus_list[0]).float()
             neighbor1 = Variable(neighbor1).cuda(gpus_list[0]).float()
-
+            # B,T,C,W,H
             neighbor2 = Variable(neighbor2).cuda(gpus_list[0]).float()
             neighbor3 = Variable(neighbor3).cuda(gpus_list[0]).float()
             ratio_array = Variable(ratio_array).cuda(gpus_list[0]).float()
-
+            # B,K,T
 
         optimizer.zero_grad()
         t0 = time.time()
         neg_rppgarr,pos_rppg1,pos_rppg2,neighbor_rppg1,neighbor_rppg2,neighbor_rppg3,negative_arr \
             = model(input, positive1, positive2,neighbor1,neighbor2,neighbor3,ratio_array)
+        # neg_rppgarr K,B,T
+        # rppg B,T
+        # negative_arr k,B,T,C,W,H
 
         l_rec = mse_loss(input, negative_arr)
-        l_frc=criterion2(neg_rppgarr,pos_rppg1,pos_rppg2,ratio_array)
-        l_cfa=criterion3(pos_rppg1,pos_rppg2,neighbor_rppg1,neighbor_rppg2,neighbor_rppg3)
-        l_fc=criterion4(neg_rppgarr,pos_rppg1,pos_rppg2)
+        l_frl=criterion2(neg_rppgarr,pos_rppg1,pos_rppg2,ratio_array)
 
-        loss = l_rec + l_frc+l_cfa+l_fc
+        l_fal=criterion3(pos_rppg1,pos_rppg2,neighbor_rppg1,neighbor_rppg2,neighbor_rppg3)
+        l_fcl=criterion4(neg_rppgarr,pos_rppg1,pos_rppg2)
+
+        loss = l_rec + l_frl+l_fal+l_fcl
 
         t1 = time.time()
 
@@ -88,7 +95,7 @@ def mse_loss(input, negative_arr):
     for i in range(len(negative_arr)):
         l_mse_negative = criterion(input, negative_arr[i])
         l_mse += l_mse_negative
-    return l_mse
+    return l_mse/len(negative_arr)
 
 def print_network(net):
     num_params = 0
@@ -125,8 +132,8 @@ model = torch.nn.DataParallel(model, device_ids=gpus_list)
 
 criterion = nn.MSELoss()
 
-criterion2=FRCL(Fs=30,min_hr = 40, max_hr = 180)
-criterion3=CFAL(Fs=30, high_pass=2.5, low_pass=0.4)
+criterion2=FRL(Fs=30,min_hr = 40, max_hr = 180)
+criterion3=FAL(Fs=30, high_pass=2.5, low_pass=0.4)
 criterion4=FCL(Fs=30, high_pass=2.5, low_pass=0.4)
 
 

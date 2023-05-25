@@ -19,8 +19,8 @@ class Net(nn.Module):
             for _ in range(2)]
         self.res1= nn.Sequential(*res1)
 
-        self.downsample_1=ConvBlock3D(base_filter, base_filter, (1,3,3), (1,2,2), (0,1,1), bias=True, norm=None)
-        self.downsample_2=ConvBlock3D(base_filter, base_filter, (1,3,3), (1,2,2), (0,1,1), bias=True, norm=None)
+        self.downsample_1=nn.Upsample(scale_factor=(1,0.5,0.5))
+        self.downsample_2=nn.Upsample(scale_factor=(1,0.25,0.25))
 
         self.upsample_1 = nn.Upsample(scale_factor=(1,2,2))
         self.upsample_2 = nn.Upsample(scale_factor=(1,4,4))
@@ -49,7 +49,7 @@ class Net(nn.Module):
         feat = self.conv1(input)
         feat=self.res1(feat)
         featdown1=self.downsample_1(feat)
-        featdown2 =self.downsample_2(featdown1)
+        featdown2 =self.downsample_2(feat)
 
         mod1feat=self.mod_gap(feat)
         mod1feat=mod1feat.squeeze(3)
@@ -84,14 +84,13 @@ class Net(nn.Module):
         mod3feat=self.mod_conv1d_3(mod3feat)
         fuse3=torch.cat((mod3feat, ratio), 1)
         mod3feat = self.mod_res1d_3(fuse3)
-
         mod3feat=mod3feat.transpose(1,2)
         mod3feat = self.mod_lstm_3(mod3feat)[0]
         mod3feat=mod3feat.view(B,1,T,1,1)
         aftermod_3=torch.mul(featdown2,mod3feat)
         aftermod_3=self.upsample_2(aftermod_3)
 
-        final=torch.cat((aftermod_1, aftermod_2,aftermod_3), 1)
-        final=self.finalconv1(final)
-        final=final.transpose(1,2)
-        return final
+        finalfeat=torch.cat((aftermod_1, aftermod_2,aftermod_3), 1)
+        finalfeat=self.finalconv1(finalfeat)
+
+        return finalfeat

@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 from net_LFA import Net as LFA
-from net_rppg import REA
+from net_REA import REA
 
 
 class Mynet(nn.Module):
@@ -14,10 +14,8 @@ class Mynet(nn.Module):
         super(Mynet, self).__init__()
 
         self.LFA=LFA(base_filter,video_length)
-        self.REA=REA(base_filter,video_length)
+        self.REA=REA(base_filter,video_length,num_expert)
         self.num_negative=num_negative
-        self.num_expert=num_expert
-
 
 
     def forward(self, input, positive1, positive2,neighbor1,neighbor2,neighbor3,ratio_array):
@@ -25,7 +23,7 @@ class Mynet(nn.Module):
         negative_arr=[]
         for i in range(self.num_negative):
             negative=self.LFA(input,ratio_array[:,i])
-            negative = negative.transpose(1, 2)
+            #BCTHW
 
             neg_rppg=self.REA(negative).squeeze(1)
             neg_rppgarr.append(neg_rppg)
