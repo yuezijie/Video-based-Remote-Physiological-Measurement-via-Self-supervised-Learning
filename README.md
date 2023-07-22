@@ -1,4 +1,4 @@
-This is the code base for paper [Video-based Remote Physiological Measurement via Self-supervised Learning](https://arxiv.org/abs/2210.15401)
+This is the code base for paper [Facial video-based Remote Physiological Measurement via Self-supervised Learning](https://arxiv.org/abs/2210.15401)
 
 # Install and compile the prerequisites
 - Python 3.8
