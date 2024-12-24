@@ -22,10 +22,11 @@ Please download the [pretrained model](https://drive.google.com/file/d/1AZ5YpD7s
 
 # Citation
 ```
-@article{yue2022video,
-  title={Video-based Remote Physiological Measurement via Self-supervised Learning},
+@article{yue2023facial,
+  title={Facial video-based remote physiological measurement via self-supervised learning},
   author={Yue, Zijie and Shi, Miaojing and Ding, Shuai},
-  journal={arXiv preprint arXiv:2210.15401},
-  year={2022}
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2023},
+  publisher={IEEE}
 }
 ```
