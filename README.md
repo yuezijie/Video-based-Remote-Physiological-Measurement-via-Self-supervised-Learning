@@ -17,8 +17,6 @@ Please download the [pretrained model](https://drive.google.com/file/d/1AZ5YpD7s
 1. Modify the data path in trainlist.txt and testlist.txt to your own data path.
 2. Run [python main_rppg.py].
 
-(Some codes are still being updated)
-
 
 # Citation
 ```
