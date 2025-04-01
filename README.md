@@ -1,6 +1,6 @@
 This is the code base for paper [Facial video-based Remote Physiological Measurement via Self-supervised Learning](https://arxiv.org/abs/2210.15401) (TPAMI, 2023)
 
-Our recent work for video-based remote physiological measurement is [Bootstrapping Vision-Language Models for Frequency-Centric Self-Supervised Remote Physiological Measurement](https://link.springer.com/article/10.1007/s11263-025-02388-5) (IJCV, 2025)
+Our recent work for video-based remote physiological measurement is [Bootstrapping Vision-Language Models for Frequency-Centric Self-Supervised Remote Physiological Measurement](https://link.springer.com/article/10.1007/s11263-025-02388-5) (IJCV, 2025). The codes can be found [here](https://github.com/yuezijie/Bootstrapping-VLM-for-Frequency-centric-Self-supervised-Remote-Physiological-Measurement).
 
 Abstract:
 
